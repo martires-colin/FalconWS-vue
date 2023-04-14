@@ -16,7 +16,9 @@
               Falcon combines a game theory-inspired utility function with state-of-the-art online search algorithms to swiftly discover "just-enough" transfer settings to obtain near-optimal transfer throughput while lowering system overhead and improving fairness.
             </div>
             <div class="text-center">
-              <v-btn color="white">Login</v-btn>
+              <v-btn @click="login" color="white">Login</v-btn>
+              <!-- <v-btn to="window.location.replace('https://google.com')" color="white">Login</v-btn> -->
+              
             </div>
           </v-container>
         </v-col>
@@ -79,7 +81,23 @@
 
 <script>
 export default {
-  name: "LandingPage"
+  name: "LandingPage",
+  methods: {
+    async login() {
+      console.log("logging in!")
+      window.location.href = "http://localhost:3000/login";
+      // const res = await fetch(`http://localhost:3000/login`, {
+      //   method : "GET",
+      //   mode: 'cors',
+      //   headers: {
+      //     "Access-Control-Allow-Origin": "*"
+      //   }
+      // });
+      // const data = await res.json();
+      // console.log(data)
+      // return data
+    },
+  }
 }
 </script>
 
