@@ -64,17 +64,6 @@ auth = OIDCAuthentication({
     "Site2": provider_config
     }, app)
 
-# CONF_URL = 'https://cilogon.org/.well-known/openid-configuration'
-# oauth = OAuth(app)
-# oauth.register(
-#     name='CILogon',
-#     server_metadata_url=CONF_URL,
-#     client_id=env.get("CILOGON_CLIENT_ID"),
-#     client_secret=env.get("CILOGON_CLIENT_SECRET"),
-#     client_kwargs={
-#         'scope': 'openid email profile'
-#     }
-# )
 
 # Create thread to handle manage_connections
 # Falcon WS listens to online Falcon Nodes on startup
@@ -83,25 +72,40 @@ auth = OIDCAuthentication({
 # )
 # daemon.start()
 
-@app.route("/")
-def home():
-    print(session)  
-    return render_template(
-        "home.html",
-        session=session,
-        page="Dashboard"
-    )
+# @app.route("/")
+# def home():
+#     print(session)  
+#     return render_template(
+#         "home.html",
+#         session=session,
+#         page="Dashboard"
+#     )
 
 
-@app.route("/dashboard")
-def dashboard():
-    return render_template(
-        "home.html",
-        user_info=session["user_info"],
-        site1_info=session["site1_info"],
-        site2_info=session["site2_info"],
-        page="Dashboard"
-    )
+# @app.route("/dashboard")
+# def dashboard():
+#     return render_template(
+#         "home.html",
+#         user_info=session["user_info"],
+#         site1_info=session["site1_info"],
+#         site2_info=session["site2_info"],
+#         page="Dashboard"
+#     )
+
+@app.route("/get_user")
+def get_user():
+    print("test")
+    # print(session['user_info'])
+    # print(session["user_info"]["email"])
+    # print(session["user_info"]["idp_name"])
+
+    # return jsonify({
+    #     "full_name": session["user_info"]["name"],
+    #     "email": session["user_info"]["email"],
+    #     "idp_name": session["user_info"]["idp_name"]
+    # })
+
+    return jsonify("colin")
 
 
 @app.route("/login")
@@ -116,25 +120,25 @@ def login():
         "access_token": session["access_token"],
         "id_token_jwt": session["id_token_jwt"]
     }
-    session['site1_info'] = {
-        "full_name": None, 
-        "email": None, 
-        "idp_name": None, 
-        "access_token": None, 
-        "id_token_jwt": None 
-    }
-    session['site2_info'] = {
-        "full_name": None,
-        "email": None, 
-        "idp_name": None, 
-        "access_token": None,
-        "id_token_jwt": None 
-    }
+    # session['site1_info'] = {
+    #     "full_name": None, 
+    #     "email": None, 
+    #     "idp_name": None, 
+    #     "access_token": None, 
+    #     "id_token_jwt": None 
+    # }
+    # session['site2_info'] = {
+    #     "full_name": None,
+    #     "email": None, 
+    #     "idp_name": None, 
+    #     "access_token": None,
+    #     "id_token_jwt": None 
+    # }
 
     print(f'Logged in as {session["user_info"]["full_name"]}')
     print(session["user_info"])
 
-    return redirect("http://localhost:8080/home-test")
+    return redirect("http://localhost:8080/dashboard")
 
 
 @app.route("/loginSite1")
@@ -192,6 +196,7 @@ def loginSite2():
 def logout():
     print(session)
     session.clear()
+    print(session)
     # return redirect(url_for("home"))
     return "ok"
 

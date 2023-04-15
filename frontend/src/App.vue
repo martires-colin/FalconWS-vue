@@ -10,7 +10,7 @@
       <v-app-bar-title>Falcon</v-app-bar-title>
 
       <template v-slot:append>
-        <v-btn variant="outlined" class="">Login</v-btn>
+        <v-btn @click="login" variant="outlined">Login</v-btn>
       </template>
     </v-app-bar>
 
@@ -25,9 +25,14 @@
 
 export default {
   name: 'App',
-
   data: () => ({
     //
   }),
+  methods: {
+    async login() {
+      console.log("logging in!")
+      window.location.href = "http://localhost:3000/login";
+    }
+  }
 }
 </script>

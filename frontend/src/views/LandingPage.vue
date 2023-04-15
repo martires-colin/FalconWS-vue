@@ -17,8 +17,6 @@
             </div>
             <div class="text-center">
               <v-btn @click="login" color="white">Login</v-btn>
-              <!-- <v-btn to="window.location.replace('https://google.com')" color="white">Login</v-btn> -->
-              
             </div>
           </v-container>
         </v-col>
@@ -86,17 +84,7 @@ export default {
     async login() {
       console.log("logging in!")
       window.location.href = "http://localhost:3000/login";
-      // const res = await fetch(`http://localhost:3000/login`, {
-      //   method : "GET",
-      //   mode: 'cors',
-      //   headers: {
-      //     "Access-Control-Allow-Origin": "*"
-      //   }
-      // });
-      // const data = await res.json();
-      // console.log(data)
-      // return data
-    },
+    }
   }
 }
 </script>
