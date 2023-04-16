@@ -8,7 +8,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import find_dotenv, load_dotenv
 from mongodb.mongo_config import *
 from flask import Flask, redirect, render_template, session, url_for, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_session import Session
 
 
@@ -33,7 +33,7 @@ app.config.update(
     SESSION_PERMANENT=False
 )
 CORS(app, resources={r"/*":{'origins':"*"}})
-sess = Session(app)
+Session(app)
 
 # Static Client/Provider Registration
 client_metadata = ClientMetadata(
@@ -93,19 +93,17 @@ auth = OIDCAuthentication({
 #     )
 
 @app.route("/get_user")
+@cross_origin(supports_credentials=True)
 def get_user():
     print("test")
+    print(session.get("user_info"))
     # print(session['user_info'])
     # print(session["user_info"]["email"])
     # print(session["user_info"]["idp_name"])
 
-    # return jsonify({
-    #     "full_name": session["user_info"]["name"],
-    #     "email": session["user_info"]["email"],
-    #     "idp_name": session["user_info"]["idp_name"]
-    # })
-
-    return jsonify("colin")
+    return jsonify({
+        "session_data": session
+    })
 
 
 @app.route("/login")
@@ -138,6 +136,8 @@ def login():
     print(f'Logged in as {session["user_info"]["full_name"]}')
     print(session["user_info"])
 
+    # return jsonify(session)
+    # return redirect("http://localhost:8080/callback")
     return redirect("http://localhost:8080/dashboard")
 
 
