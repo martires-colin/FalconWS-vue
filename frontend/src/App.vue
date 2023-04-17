@@ -10,7 +10,8 @@
       <v-app-bar-title>Falcon</v-app-bar-title>
 
       <template v-slot:append>
-        <v-btn @click="login" variant="outlined">Login</v-btn>
+        <v-btn v-if="this.$store.state.user.email" @click="logout" variant="outlined">Logout</v-btn>
+        <v-btn v-else @click="login" variant="outlined">Login</v-btn>
       </template>
     </v-app-bar>
 
@@ -26,12 +27,16 @@
 export default {
   name: 'App',
   data: () => ({
-    //
+    
   }),
   methods: {
     async login() {
       console.log("logging in!")
       window.location.href = "http://localhost:3000/login";
+    },
+    async logout() {
+      console.log("logging out!")
+      window.location.href = "http://localhost:3000/logout";
     }
   }
 }

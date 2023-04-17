@@ -95,14 +95,12 @@ auth = OIDCAuthentication({
 @app.route("/get_user")
 @cross_origin(supports_credentials=True)
 def get_user():
-    print("test")
-    print(session.get("user_info"))
-    # print(session['user_info'])
-    # print(session["user_info"]["email"])
-    # print(session["user_info"]["idp_name"])
+    print(session)
 
     return jsonify({
-        "session_data": session
+        "user_info": session.get("user_info"),
+        "site1_info": session.get("site1_info"),
+        "site2_info": session.get("site2_info")
     })
 
 
@@ -136,8 +134,6 @@ def login():
     print(f'Logged in as {session["user_info"]["full_name"]}')
     print(session["user_info"])
 
-    # return jsonify(session)
-    # return redirect("http://localhost:8080/callback")
     return redirect("http://localhost:8080/dashboard")
 
 
@@ -163,7 +159,8 @@ def loginSite1():
     }
     print(f'Site 1 Info\n{session["site1_info"]}')
 
-    return redirect(url_for("dashboard"))
+    return redirect("http://localhost:8080/dashboard")
+
 
 
 @app.route("/loginSite2")
@@ -188,17 +185,18 @@ def loginSite2():
     }
     print(f'Site 2 Info\n{session["site2_info"]}')
 
-    return redirect(url_for("dashboard"))
+    return redirect("http://localhost:8080/dashboard")
+
 
 
 @app.route("/logout")
 @auth.oidc_logout
 def logout():
+    print("Logging OUT")
     print(session)
     session.clear()
     print(session)
-    # return redirect(url_for("home"))
-    return "ok"
+    return redirect("http://localhost:8080/")
 
 
 @app.route("/account")

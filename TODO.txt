@@ -1,0 +1,4 @@
+connect to mongodb
+- send valid ips to frontend
+- maybe just use original method, not v-select
+remove print statements in logout
