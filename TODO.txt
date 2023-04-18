@@ -1,4 +1,13 @@
-connect to mongodb
+disable offline ips
 - send valid ips to frontend
 - maybe just use original method, not v-select
+
 remove print statements in logout
+
+find a good place to send verify request
+- can we have verification built into the list_files command?
+    - the server or falcon node will verify the connection first before sending files
+
+format filebrowser
+
+fix form validation bug
