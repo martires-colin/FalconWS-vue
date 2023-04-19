@@ -53,16 +53,14 @@
           </v-row>
           <v-row>
             <!-- {{ this.site1_files }} -->
-            <v-table v-if="this.site1_files.length > 0" class="w-100 ma-4" style="max-height:50vh; overflow:auto">
+            <v-table v-if="this.site2_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
-                  <th class="text-left">
-                  <!-- add select all input checkbox -->
+                  <th class="text-center">
+                    <v-btn @click="exploreS1(none, true)" icon="mdi-keyboard-backspace" size="small" variant="text"></v-btn>
                   </th>
-                  <th class="text-left" style="max-width: 5px; overflow:auto">
-                  <p class="w-10">
-                    File Name
-                  </p>
+                  <th class="text-left">
+                  File Name
                   </th>
                   <th class="text-left">
                   Last Modified
@@ -74,9 +72,9 @@
                 </thead>
                 <tbody>
                 <tr v-for="file in this.site1_files" :key="file.name">
-                    <td class="text-left"><input type="checkbox" :value="file.name" v-model="selected"></td>
+                    <td class="text-center"><input type="checkbox" :value="file.name" v-model="selected"></td>
                     <td class="text-left" style="max-width: 20vw; overflow:auto">
-                      <a href="#" @click="exploreS1(file.name)" v-if="file.type == 'dir'">{{ file.name }}</a>
+                      <a href="#" @click="exploreS1(file.name, false)" v-if="file.type == 'dir'">{{ file.name }}</a>
                       <p v-else>{{ file.name }}</p>
                     </td>
                     <td class="text-left">{{ file.last_modified }}</td>
@@ -90,7 +88,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="1" class="d-flex justify-center align-center">
+        <v-col cols="1" class="d-flex justify-center align-center" style="height: 80vh">
             <!-- Initiate Transfer Button -->
           <v-row v-if="this.site1_files.length > 0 && this.site2_files.length > 0">
             <div class="text-center w-100">
@@ -135,11 +133,11 @@
           </v-row>
           <v-row>
             <!-- {{ this.site2_files }} -->
-            <v-table v-if="this.site2_files.length > 0" class="w-100 ma-4" style="max-height:50vh; overflow:auto">
+            <v-table v-if="this.site2_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
-                  <th class="text-left"> 
-                  <!-- add select all input checkbox -->
+                  <th class="text-center">
+                    <v-btn @click="exploreS2(none, true)" icon="mdi-keyboard-backspace" size="small" variant="text"></v-btn>
                   </th>
                   <th class="text-left">
                   File Name
@@ -154,7 +152,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="file in this.site2_files" :key="file.name">
-                    <td class="text-left"><input type="checkbox" style="visibility: hidden;" disabled></td>
+                    <td class="text-center"><input type="checkbox" disabled></td>
                     <td class="text-left" style="max-width: 20vw; overflow:auto">
                       <a href="#" @click="exploreS2(file.name)" v-if="file.type == 'dir'">{{ file.name }}</a>
                       <p v-else>{{ file.name }}</p></td>
@@ -370,8 +368,15 @@ export default {
       })
 
     },
-    async exploreS1(new_folder) {
-      const new_path = this.file_path_s1.value.value.concat("\\", new_folder)
+    async exploreS1(new_folder, isBack) {
+
+      let new_path = ""
+      if (isBack) {
+        const endPathStartIndex = this.file_path_s1.value.value.lastIndexOf("\\")
+        new_path = this.file_path_s1.value.value.substring(0, endPathStartIndex)
+      } else {
+        new_path = this.file_path_s1.value.value.concat("\\", new_folder)
+      }
 
       axios.post("http://localhost:3000/site1_ip", {
         site1_IP: this.ip_address_s1.value.value,
@@ -400,8 +405,15 @@ export default {
         }
       })
     },
-    async exploreS2(new_folder) {
-      const new_path = this.file_path_s2.value.value.concat("\\", new_folder)
+    async exploreS2(new_folder, isBack) {
+
+      let new_path = ""
+      if (isBack) {
+        const endPathStartIndex = this.file_path_s2.value.value.lastIndexOf("\\")
+        new_path = this.file_path_s2.value.value.substring(0, endPathStartIndex)
+      } else {
+        new_path = this.file_path_s2.value.value.concat("\\", new_folder)
+      }
 
       axios.post("http://localhost:3000/site2_ip", {
         site2_IP: this.ip_address_s2.value.value,
