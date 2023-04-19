@@ -13,3 +13,5 @@ format filebrowser
 fix form validation bug
 
 add check to make sure both site1 and site2 have values
+
+implement function to go back in file browser

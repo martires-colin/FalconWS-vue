@@ -13,7 +13,7 @@
 
       <!-- Page Header -->
       <v-row>
-        <div class="text-h4 text-center w-100" >File Transfer Portal</div>
+        <div class="text-h4 text-center w-100">File Transfer Portal</div>
       </v-row>
 
       <!-- File Browser Section -->
@@ -23,7 +23,7 @@
           <v-row>
             <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_1" class="text-center w-100">
-              <div class="text-h5">{{ this.$store.state.site_1.idp_name }}</div>
+              <div class="text-h5 ma-2">{{ this.$store.state.site_1.idp_name }}</div>
               
               <form @submit.prevent="submit_s1">
                 <v-select
@@ -53,14 +53,16 @@
           </v-row>
           <v-row>
             <!-- {{ this.site1_files }} -->
-            <v-table v-if="this.site1_files.length > 0">
+            <v-table v-if="this.site1_files.length > 0" class="w-100 ma-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
                   <th class="text-left">
-                  
+                  <!-- add select all input checkbox -->
                   </th>
-                  <th class="text-left">
-                  File Name
+                  <th class="text-left" style="max-width: 5px; overflow:auto">
+                  <p class="w-10">
+                    File Name
+                  </p>
                   </th>
                   <th class="text-left">
                   Last Modified
@@ -73,22 +75,37 @@
                 <tbody>
                 <tr v-for="file in this.site1_files" :key="file.name">
                     <td class="text-left"><input type="checkbox" :value="file.name" v-model="selected"></td>
-                    <td class="text-left">{{ file.name }}</td>
+                    <td class="text-left" style="max-width: 20vw; overflow:auto">
+                      <a href="#" @click="exploreS1(file.name)" v-if="file.type == 'dir'">{{ file.name }}</a>
+                      <p v-else>{{ file.name }}</p>
+                    </td>
                     <td class="text-left">{{ file.last_modified }}</td>
-                    <td class="text-left">{{ file.type }}</td>
+                    <td class="text-center">
+                      <v-icon v-if="file.type == 'dir'" icon="mdi-folder-outline"></v-icon>
+                      <v-icon v-else icon="mdi-file-outline"></v-icon>
+                    </td>
                 </tr>
                 </tbody>
             </v-table>
           </v-row>
         </v-col>
 
+        <v-col cols="1" class="d-flex justify-center align-center">
+            <!-- Initiate Transfer Button -->
+          <v-row v-if="this.site1_files.length > 0 && this.site2_files.length > 0">
+            <div class="text-center w-100">
+              <!-- {{ selected }} -->
+              <v-btn @click="transfer()" color="blue-lighten-1">Transfer</v-btn>
+            </div>
+          </v-row>
+        </v-col>
 
         <!-- Site 2 -->
         <v-col class="ma-1">
           <v-row>
             <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_2" class="text-center w-100">
-              <div class="text-h5">{{ this.$store.state.site_2.idp_name }}</div>
+              <div class="text-h5 ma-2">{{ this.$store.state.site_2.idp_name }}</div>
               
               <form @submit.prevent="submit_s2">
                 <v-select
@@ -118,10 +135,11 @@
           </v-row>
           <v-row>
             <!-- {{ this.site2_files }} -->
-            <v-table v-if="this.site2_files.length > 0">
+            <v-table v-if="this.site2_files.length > 0" class="w-100 ma-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
                   <th class="text-left"> 
+                  <!-- add select all input checkbox -->
                   </th>
                   <th class="text-left">
                   File Name
@@ -136,10 +154,15 @@
                 </thead>
                 <tbody>
                 <tr v-for="file in this.site2_files" :key="file.name">
-                    <td class="text-left"><v-checkbox></v-checkbox></td>
-                    <td class="text-left">{{ file.name }}</td>
+                    <td class="text-left"><input type="checkbox" style="visibility: hidden;" disabled></td>
+                    <td class="text-left" style="max-width: 20vw; overflow:auto">
+                      <a href="#" @click="exploreS2(file.name)" v-if="file.type == 'dir'">{{ file.name }}</a>
+                      <p v-else>{{ file.name }}</p></td>
                     <td class="text-left">{{ file.last_modified }}</td>
-                    <td class="text-left">{{ file.type }}</td>
+                    <td class="text-center">
+                      <v-icon v-if="file.type == 'dir'" icon="mdi-folder-outline"></v-icon>
+                      <v-icon v-else icon="mdi-file-outline"></v-icon>
+                    </td>
                 </tr>
                 </tbody>
             </v-table>
@@ -147,10 +170,6 @@
 
         </v-col>
       </v-row>
-
-
-      {{ selected }}
-      <v-btn @click="transfer()">Transfer</v-btn>
 
     </v-container>
 	</div>
@@ -350,6 +369,66 @@ export default {
         console.log(err)
       })
 
+    },
+    async exploreS1(new_folder) {
+      const new_path = this.file_path_s1.value.value.concat("\\", new_folder)
+
+      axios.post("http://localhost:3000/site1_ip", {
+        site1_IP: this.ip_address_s1.value.value,
+        site1_access_token: "NB2HI4DTHIXS6Y3JNRXWO33OFZXXEZZPN5QXK5DIGIXTOZBTG43DCZTDMFRGENBQGEZGGOJUG5QTGMTFGQZDMMBUGVQTMNR7OR4XAZJ5MFRWGZLTONKG623FNYTHI4Z5GE3DQMJXHE2DEMRTGIYDIJTWMVZHG2LPNY6XMMROGATGY2LGMV2GS3LFHU4TAMBQGAYA",
+        site1_id_token_jwt: "eyJ0eXAiOiJKV1QiLCJraWQiOiIyNDRCMjM1RjZCMjhFMzQxMDhEMTAxRUFDNzM2MkM0RSIsImFsZyI6IlJTMjU2In0.eyJlbWFpbCI6ImNtYXJ0aXJlc0BuZXZhZGEudW5yLmVkdSIsImdpdmVuX25hbWUiOiJDb2xpbiIsImZhbWlseV9uYW1lIjoiTWFydGlyZXMiLCJuYW1lIjoiQ29saW4gTCBNYXJ0aXJlcyIsImNlcnRfc3ViamVjdF9kbiI6Ii9EQz1vcmcvREM9Y2lsb2dvbi9DPVVTL089VW5pdmVyc2l0eSBvZiBOZXZhZGEsIFJlbm8vQ049Q29saW4gTWFydGlyZXMgRTE1Mjc2IiwiaWRwIjoiaHR0cHM6Ly9pZHAyLnVuci5lZHUvaWRwL3NoaWJib2xldGgiLCJpZHBfbmFtZSI6IlVuaXZlcnNpdHkgb2YgTmV2YWRhLCBSZW5vIiwiZXBwbiI6ImNtYXJ0aXJlc0B1bnIuZWR1IiwiZXB0aWQiOiJodHRwczovL2lkcDIudW5yLmVkdS9pZHAvc2hpYmJvbGV0aCFodHRwczovL2NpbG9nb24ub3JnL3NoaWJib2xldGghWmZaS1pVWFRhT2w2WmFmT3FXdmM0YWRVWnRnPSIsImFmZmlsaWF0aW9uIjoic3R1ZGVudEB1bnIuZWR1O21lbWJlckB1bnIuZWR1O2ZhY3VsdHlAdW5yLmVkdTtsaWJyYXJ5LXdhbGstaW5AdW5yLmVkdTtzdGFmZkB1bnIuZWR1O2VtcGxveWVlQHVuci5lZHUiLCJhY3IiOiJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZFByb3RlY3RlZFRyYW5zcG9ydCIsImlzcyI6Imh0dHBzOi8vY2lsb2dvbi5vcmciLCJzdWIiOiJodHRwOi8vY2lsb2dvbi5vcmcvc2VydmVyRS91c2Vycy8xNTI3NiIsImF1ZCI6ImNpbG9nb246L2NsaWVudF9pZC8xYTA1MTE0NWVjYjQzNzUwOGVkOGE4ODcxYmVkN2I3NyIsImp0aSI6Imh0dHBzOi8vY2lsb2dvbi5vcmcvb2F1dGgyL2lkVG9rZW4vMTFlNDk2MTc0YjY0NWRjYTk1MmEwYzk1NTk2OGI5ZGUvMTY4MTc5NDIyMzA2MSIsIm5vbmNlIjoiTEhGcG9qSW8zV0JkT2hkZSIsImF1dGhfdGltZSI6MTY4MTc5MzY4NSwiZXhwIjoxNjgxNzk1MTIzLCJpYXQiOjE2ODE3OTQyMjN9.cL1EBdX2SmbOmBnD4iFpAg1seafL6gkuCkG21EOnUYp_KF9VCHDpzr-rVdLVPBW_jESL3Grr877jKwkdmXVZsNrLmWP2Y1nbEF587dw5UEwP38pUnfHgU63w7FP7kA1LnnCBtLisvLB-6XG-R8ahYCrDeYWMbOWILPHuZt0_nIW9Dc1BzqfAqN8u6mP-H6JB4g0BNUihcH63DN3qdUN-2J5mSIJQ8vIr4B2WLhTuGjw4mR4vttm-3x8jaW0-mFmcqAtEbSytkZ24d9WuYqMy5-a0YLn3w3r6fJomdKkV8zTYrl6odXbii-C_jq05Dj54nLoxm9x2dnVZV_Q-F4xgOg"
+      }).then((res) => {
+        console.log(res)
+        if (!res.data.is_valid_ip) {
+          alert("IP not found in database")
+        } else {
+          const payload = {
+            ip_addr: this.ip_address_s1.value.value,
+            file_path : new_path
+          }
+          const path = "http://localhost:3000/listFiles"
+          axios
+            .post(path, payload)
+            .then((res) => {
+              console.log(res.data.files)
+              this.site1_files = res.data.files
+              this.file_path_s1.value.value = new_path
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }
+      })
+    },
+    async exploreS2(new_folder) {
+      const new_path = this.file_path_s2.value.value.concat("\\", new_folder)
+
+      axios.post("http://localhost:3000/site2_ip", {
+        site2_IP: this.ip_address_s2.value.value,
+        site2_access_token: "NB2HI4DTHIXS6Y3JNRXWO33OFZXXEZZPN5QXK5DIGIXTOZBTG43DCZTDMFRGENBQGEZGGOJUG5QTGMTFGQZDMMBUGVQTMNR7OR4XAZJ5MFRWGZLTONKG623FNYTHI4Z5GE3DQMJXHE2DEMRTGIYDIJTWMVZHG2LPNY6XMMROGATGY2LGMV2GS3LFHU4TAMBQGAYA",
+        site2_id_token_jwt: "eyJ0eXAiOiJKV1QiLCJraWQiOiIyNDRCMjM1RjZCMjhFMzQxMDhEMTAxRUFDNzM2MkM0RSIsImFsZyI6IlJTMjU2In0.eyJlbWFpbCI6ImNtYXJ0aXJlc0BuZXZhZGEudW5yLmVkdSIsImdpdmVuX25hbWUiOiJDb2xpbiIsImZhbWlseV9uYW1lIjoiTWFydGlyZXMiLCJuYW1lIjoiQ29saW4gTCBNYXJ0aXJlcyIsImNlcnRfc3ViamVjdF9kbiI6Ii9EQz1vcmcvREM9Y2lsb2dvbi9DPVVTL089VW5pdmVyc2l0eSBvZiBOZXZhZGEsIFJlbm8vQ049Q29saW4gTWFydGlyZXMgRTE1Mjc2IiwiaWRwIjoiaHR0cHM6Ly9pZHAyLnVuci5lZHUvaWRwL3NoaWJib2xldGgiLCJpZHBfbmFtZSI6IlVuaXZlcnNpdHkgb2YgTmV2YWRhLCBSZW5vIiwiZXBwbiI6ImNtYXJ0aXJlc0B1bnIuZWR1IiwiZXB0aWQiOiJodHRwczovL2lkcDIudW5yLmVkdS9pZHAvc2hpYmJvbGV0aCFodHRwczovL2NpbG9nb24ub3JnL3NoaWJib2xldGghWmZaS1pVWFRhT2w2WmFmT3FXdmM0YWRVWnRnPSIsImFmZmlsaWF0aW9uIjoic3R1ZGVudEB1bnIuZWR1O21lbWJlckB1bnIuZWR1O2ZhY3VsdHlAdW5yLmVkdTtsaWJyYXJ5LXdhbGstaW5AdW5yLmVkdTtzdGFmZkB1bnIuZWR1O2VtcGxveWVlQHVuci5lZHUiLCJhY3IiOiJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZFByb3RlY3RlZFRyYW5zcG9ydCIsImlzcyI6Imh0dHBzOi8vY2lsb2dvbi5vcmciLCJzdWIiOiJodHRwOi8vY2lsb2dvbi5vcmcvc2VydmVyRS91c2Vycy8xNTI3NiIsImF1ZCI6ImNpbG9nb246L2NsaWVudF9pZC8xYTA1MTE0NWVjYjQzNzUwOGVkOGE4ODcxYmVkN2I3NyIsImp0aSI6Imh0dHBzOi8vY2lsb2dvbi5vcmcvb2F1dGgyL2lkVG9rZW4vMTFlNDk2MTc0YjY0NWRjYTk1MmEwYzk1NTk2OGI5ZGUvMTY4MTc5NDIyMzA2MSIsIm5vbmNlIjoiTEhGcG9qSW8zV0JkT2hkZSIsImF1dGhfdGltZSI6MTY4MTc5MzY4NSwiZXhwIjoxNjgxNzk1MTIzLCJpYXQiOjE2ODE3OTQyMjN9.cL1EBdX2SmbOmBnD4iFpAg1seafL6gkuCkG21EOnUYp_KF9VCHDpzr-rVdLVPBW_jESL3Grr877jKwkdmXVZsNrLmWP2Y1nbEF587dw5UEwP38pUnfHgU63w7FP7kA1LnnCBtLisvLB-6XG-R8ahYCrDeYWMbOWILPHuZt0_nIW9Dc1BzqfAqN8u6mP-H6JB4g0BNUihcH63DN3qdUN-2J5mSIJQ8vIr4B2WLhTuGjw4mR4vttm-3x8jaW0-mFmcqAtEbSytkZ24d9WuYqMy5-a0YLn3w3r6fJomdKkV8zTYrl6odXbii-C_jq05Dj54nLoxm9x2dnVZV_Q-F4xgOg"
+      }).then((res) => {
+        console.log(res)
+        if (!res.data.is_valid_ip) {
+          alert("IP not found in database")
+        } else {
+          const payload = {
+            ip_addr: this.ip_address_s2.value.value,
+            file_path : new_path
+          }
+          const path = "http://localhost:3000/listFiles"
+          axios
+            .post(path, payload)
+            .then((res) => {
+              console.log(res.data.files)
+              this.site2_files = res.data.files
+              this.file_path_s2.value.value = new_path
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }
+      })
     }
   },
   created() {
@@ -363,6 +442,16 @@ export default {
 .v-container {
   padding-left: 7rem;
   padding-right: 7rem;  
+}
+
+.v-table {
+  border-style: solid;
+  border-color: #EEEEEE;
+  border-width: thin;
+}
+
+td::-webkit-scrollbar{
+  display: none;
 }
 
 /* .v-container {
