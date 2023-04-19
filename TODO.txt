@@ -11,3 +11,5 @@ find a good place to send verify request
 format filebrowser
 
 fix form validation bug
+
+add check to make sure both site1 and site2 have values

@@ -19,7 +19,7 @@
       <!-- File Browser Section -->
       <v-row>
         <!-- Site 1 -->
-        <v-col>
+        <v-col class="ma-1">
           <v-row>
             <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_1" class="text-center w-100">
@@ -72,7 +72,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="file in this.site1_files" :key="file.name">
-                    <td class="text-left"><v-checkbox></v-checkbox></td>
+                    <td class="text-left"><input type="checkbox" :value="file.name" v-model="selected"></td>
                     <td class="text-left">{{ file.name }}</td>
                     <td class="text-left">{{ file.last_modified }}</td>
                     <td class="text-left">{{ file.type }}</td>
@@ -82,8 +82,9 @@
           </v-row>
         </v-col>
 
+
         <!-- Site 2 -->
-        <v-col>
+        <v-col class="ma-1">
           <v-row>
             <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_2" class="text-center w-100">
@@ -147,6 +148,10 @@
         </v-col>
       </v-row>
 
+
+      {{ selected }}
+      <v-btn @click="transfer()">Transfer</v-btn>
+
     </v-container>
 	</div>
 </template>
@@ -162,7 +167,7 @@ export default {
 	name: "DashboardView",
   data() {
     return {
-      selected_files: []
+      selected: []
     }
   },
   setup () {
@@ -324,6 +329,27 @@ export default {
       });
       this.site2_ips = site2_ips
 
+    },
+    async transfer() {
+      const payload = {
+        file_list: this.selected,
+        srcIP: this.ip_address_s1.value.value,
+        srcPath: this.file_path_s1.value.value,
+        destIP: this.ip_address_s2.value.value,
+        destPath: this.file_path_s2.value.value,
+      }
+      console.log(payload)
+
+      axios.post("http://localhost:3000/transferFiles", {
+        srcIP: this.ip_address_s1.value.value,
+        destIP: this.ip_address_s2.value.value,
+        selected_files: this.selected
+      }).then((res) => {
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
+
     }
   },
   created() {
@@ -339,17 +365,17 @@ export default {
   padding-right: 7rem;  
 }
 
-.v-container {
+/* .v-container {
   border-style: solid;
   border-color: red;
-}
-.v-row {
+} */
+/* .v-row {
   border-style: solid;
   border-color: blue;
-}
-.v-col {
+} */
+/* .v-col {
   border-style: solid;
   border-color: green;
-}
+} */
 
 </style>

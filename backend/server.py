@@ -399,17 +399,22 @@ def site2_ip():
 @app.route('/transferFiles', methods=['POST', 'GET'])
 def transferFiles():
 
-    srcIP = request.form["site1_IP"]
-    srcPath = request.form["srcPath"]
-    destIP = request.form["site2_IP"]
-    destPath = request.form["destPath"]
-    selectedFiles = request.form.getlist("selectedFiles[]")
+    # srcIP = request.form["site1_IP"]
+    # srcPath = request.form["srcPath"]
+    # destIP = request.form["site2_IP"]
+    # destPath = request.form["destPath"]
+    # selectedFiles = request.form.getlist("selectedFiles[]")
 
-    topic = "transfer_files"
-    src_IP_addr = f'Source IP Address: {srcIP}'
-    src_path = f'Source File Path: {srcPath}'
-    dest_IP_addr = f'Destination IP Address: {destIP}'
-    dest_path = f'Destination File Path: {destPath}'
+    # topic = "transfer_files"
+    # src_IP_addr = f'Source IP Address: {srcIP}'
+    # src_path = f'Source File Path: {srcPath}'
+    # dest_IP_addr = f'Destination IP Address: {destIP}'
+    # dest_path = f'Destination File Path: {destPath}'
+
+    post_data = request.get_json()
+    srcIP = post_data['srcIP']
+    destIP = post_data['destIP']
+    selectedFiles = post_data['selected_files']
 
     print("Sending request ...")
     # socket.send_string("%s\n%s\n%s\n%s\n%s" % (topic, src_IP_addr, src_path, dest_IP_addr, dest_path))
@@ -452,7 +457,7 @@ def transferFiles():
     }
     print(payload)
     # status = rmq.make_request(payload["sender_ip"], "transfer", payload["receiver_ip"], payload["file_list"])
-    rmq.transfer(payload["sender_ip"], payload["receiver_ip"], payload["file_list"])
+    # rmq.transfer(payload["sender_ip"], payload["receiver_ip"], payload["file_list"])
 
 
     return jsonify({'data': payload})
