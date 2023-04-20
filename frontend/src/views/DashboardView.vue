@@ -90,7 +90,8 @@
 
         <v-col cols="1" class="d-flex justify-center align-center" style="height: 80vh">
             <!-- Initiate Transfer Button -->
-          <v-row v-if="this.site1_files.length > 0 && this.site2_files.length > 0">
+          <!-- <v-row v-if="this.site1_files.length > 0 && this.site2_files.length > 0"> -->
+          <v-row>
             <div class="text-center w-100">
               <!-- {{ selected }} -->
               <v-btn @click="transfer()" color="blue-lighten-1">Transfer</v-btn>
@@ -360,6 +361,8 @@ export default {
       axios.post("http://localhost:3000/transferFiles", {
         srcIP: this.ip_address_s1.value.value,
         destIP: this.ip_address_s2.value.value,
+        sender_dir: this.file_path_s1.value.value,
+        dest_dir: this.file_path_s2.value.value,
         selected_files: this.selected
       }).then((res) => {
         console.log(res)

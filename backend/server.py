@@ -402,6 +402,12 @@ def transferFiles():
     post_data = request.get_json()
     srcIP = post_data['srcIP']
     destIP = post_data['destIP']
+    sender_dir = post_data['sender_dir']
+    dest_dir = post_data['dest_dir']
+
+    sender_dir_list = []
+    sender_dir_list.append(sender_dir)
+    
     selectedFiles = post_data['selected_files']
 
     print("Sending transfer request ...")
@@ -409,11 +415,14 @@ def transferFiles():
     payload = {
         "sender_ip": srcIP,
         "receiver_ip": destIP,
-        "file_list": selectedFiles
+        "dest_dir": dest_dir,
+        # "file_list": selectedFiles
+        "file_list": sender_dir_list
     }
     print(payload)
     # status = rmq.make_request(payload["sender_ip"], "transfer", payload["receiver_ip"], payload["file_list"])
     # rmq.transfer(payload["sender_ip"], payload["receiver_ip"], payload["file_list"])
+    rmq.transfer(payload["receiver_ip"], payload["dest_dir"], payload["sender_ip"], payload["file_list"])
 
 
     return jsonify({'data': payload})
