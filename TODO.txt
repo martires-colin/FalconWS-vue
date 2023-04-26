@@ -1,8 +1,8 @@
 disable offline ips
 - send valid ips to frontend
 - maybe just use original method, not v-select
-
-remove print statements in logout
+- maybe only add online nodes to ip list
+    - verified status has overwritten online status
 
 find a good place to send verify request
 - can we have verification built into the list_files command?
@@ -13,3 +13,17 @@ format filebrowser
 fix form validation bug
 
 add check to make sure both site1 and site2 have values
+
+- redirect users to “transfer status/history page” after initiating transfer to prevent spam requests
+    - disable buttons while transfer is running
+
+- add visual indicators of loading requests (list files and transfer)
+
+- set home dir as default dir
+
+- transfer should be able to be performed both ways
+
+- display file size
+    - should folder size be 4096 B or sum of contents?
+
+- add error handling

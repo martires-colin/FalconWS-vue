@@ -72,26 +72,6 @@ daemon = Thread(
 )
 daemon.start()
 
-# @app.route("/")
-# def home():
-#     print(session)  
-#     return render_template(
-#         "home.html",
-#         session=session,
-#         page="Dashboard"
-#     )
-
-
-# @app.route("/dashboard")
-# def dashboard():
-#     return render_template(
-#         "home.html",
-#         user_info=session["user_info"],
-#         site1_info=session["site1_info"],
-#         site2_info=session["site2_info"],
-#         page="Dashboard"
-#     )
-
 @app.route("/get_user")
 @cross_origin(supports_credentials=True)
 def get_user():
@@ -116,20 +96,6 @@ def login():
         "access_token": session["access_token"],
         "id_token_jwt": session["id_token_jwt"]
     }
-    # session['site1_info'] = {
-    #     "full_name": None, 
-    #     "email": None, 
-    #     "idp_name": None, 
-    #     "access_token": None, 
-    #     "id_token_jwt": None 
-    # }
-    # session['site2_info'] = {
-    #     "full_name": None,
-    #     "email": None, 
-    #     "idp_name": None, 
-    #     "access_token": None,
-    #     "id_token_jwt": None 
-    # }
 
     print(f'Logged in as {session["user_info"]["full_name"]}')
     print(session["user_info"])
@@ -218,7 +184,6 @@ def listFiles():
 @auth.oidc_logout
 def logout():
     print("Logging OUT")
-    print(session)
     session.clear()
     print(session)
     return redirect("http://localhost:8080/")
@@ -331,70 +296,6 @@ def site2_ip():
     return jsonify({'is_valid_ip': isValidIP})
     # return jsonify("hello")
 
-
-# @app.route('/updateSrc', methods=['POST'])
-# def updateSrc():
-#     site1_IP = session["site1_info"]["ip_address"]
-#     site1_path = request.form["srcPath"]
-
-#     if site1_IP and site1_path:
-#         print("Sending request ...")
-
-#         # Handle multiple users with different threads?
-#         # daemon = Thread(
-#         #     target=rmq.make_request, args=(site1_IP, "list", site1_path), 
-#         #     daemon=True, name=f"{site1_IP}_list_request"
-#         # )
-#         # daemon.start()
-#         site1_files = rmq.list_directory(site1_IP, site1_path)
-#         print(site1_files)
-
-#         # topic = "ls_src"
-#         # IP_addr = f'IP Address: {srcIP}'
-#         # file_path = f'Path: {srcPath}'
-
-#         # socket.send_string("%s\n%s\n%s" % (topic, IP_addr, file_path))
-
-#         # srcFiles = socket.recv_json()
-#         # print("Received reply %s" % message)
-#         # srcFiles = getFiles(srcCollection, srcPath)
-#     else:
-#         site1_files = []
-
-#     return jsonify({'files': site1_files["DATA"]})
-
-
-# @app.route('/updateDest', methods=['POST'])
-# def updateDest():
-
-#     site2_IP = session["site2_info"]["ip_address"]
-#     site2_path = request.form["destPath"]
-
-#     if site2_IP and site2_path:
-#         print("Sending request ...")
-
-#         # Handle multiple users with different threads?
-#         # daemon = Thread(
-#         #     target=rmq.make_request, args=(site2_IP, "list", site2_path), 
-#         #     daemon=True, name=f"{site2_IP}_list_request"
-#         # )
-#         # daemon.start()
-#         site2_files = rmq.list_directory(site2_IP, site2_path)
-#         print(site2_files)
-
-#         # topic = "ls_src"
-#         # IP_addr = f'IP Address: {srcIP}'
-#         # file_path = f'Path: {srcPath}'
-
-#         # socket.send_string("%s\n%s\n%s" % (topic, IP_addr, file_path))
-
-#         # srcFiles = socket.recv_json()
-#         # print("Received reply %s" % message)
-#         # srcFiles = getFiles(srcCollection, srcPath)
-#     else:
-#         site2_files = []
-
-#     return jsonify({'files': site2_files["DATA"]})
 
 @app.route('/transferFiles', methods=['POST', 'GET'])
 def transferFiles():

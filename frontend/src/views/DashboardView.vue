@@ -65,6 +65,9 @@
                   <th class="text-left">
                   Last Modified
                   </th>
+                  <th class="text-left">
+                  File Size
+                  </th>
                   <th class="text-center">
                   Type
                   </th>
@@ -78,6 +81,7 @@
                       <p v-else>{{ file.name }}</p>
                     </td>
                     <td class="text-left">{{ file.last_modified }}</td>
+                    <td class="text-left">{{ file.size }} B</td>
                     <td class="text-center">
                       <v-icon v-if="file.type == 'dir'" icon="mdi-folder-outline"></v-icon>
                       <v-icon v-else icon="mdi-file-outline"></v-icon>
@@ -146,6 +150,9 @@
                   <th class="text-left">
                   Last Modified
                   </th>
+                  <th class="text-left">
+                  File Size
+                  </th>
                   <th class="text-center">
                   Type
                   </th>
@@ -158,6 +165,7 @@
                       <a href="#" @click="exploreS2(file.name)" v-if="file.type == 'dir'">{{ file.name }}</a>
                       <p v-else>{{ file.name }}</p></td>
                     <td class="text-left">{{ file.last_modified }}</td>
+                    <td class="text-left">{{ file.size }} B</td>
                     <td class="text-center">
                       <v-icon v-if="file.type == 'dir'" icon="mdi-folder-outline"></v-icon>
                       <v-icon v-else icon="mdi-file-outline"></v-icon>
@@ -176,7 +184,7 @@
 
 <script>
 import { ref } from 'vue'
-// import { useStore} from "vuex";
+import { useStore} from "vuex";
 // import {computed} from "vue";
 import { useField, useForm } from 'vee-validate'
 import axios from 'axios'
@@ -189,7 +197,7 @@ export default {
     }
   },
   setup () {
-    // const store = useStore();
+    const store = useStore();
 
     const { handleSubmit, handleReset } = useForm({
       // validationSchema: {
@@ -224,8 +232,8 @@ export default {
 
       axios.post("http://localhost:3000/site1_ip", {
         site1_IP: values.ip_address_s1,
-        site1_access_token: "NB2HI4DTHIXS6Y3JNRXWO33OFZXXEZZPN5QXK5DIGIXTOZBTG43DCZTDMFRGENBQGEZGGOJUG5QTGMTFGQZDMMBUGVQTMNR7OR4XAZJ5MFRWGZLTONKG623FNYTHI4Z5GE3DQMJXHE2DEMRTGIYDIJTWMVZHG2LPNY6XMMROGATGY2LGMV2GS3LFHU4TAMBQGAYA",
-        site1_id_token_jwt: "eyJ0eXAiOiJKV1QiLCJraWQiOiIyNDRCMjM1RjZCMjhFMzQxMDhEMTAxRUFDNzM2MkM0RSIsImFsZyI6IlJTMjU2In0.eyJlbWFpbCI6ImNtYXJ0aXJlc0BuZXZhZGEudW5yLmVkdSIsImdpdmVuX25hbWUiOiJDb2xpbiIsImZhbWlseV9uYW1lIjoiTWFydGlyZXMiLCJuYW1lIjoiQ29saW4gTCBNYXJ0aXJlcyIsImNlcnRfc3ViamVjdF9kbiI6Ii9EQz1vcmcvREM9Y2lsb2dvbi9DPVVTL089VW5pdmVyc2l0eSBvZiBOZXZhZGEsIFJlbm8vQ049Q29saW4gTWFydGlyZXMgRTE1Mjc2IiwiaWRwIjoiaHR0cHM6Ly9pZHAyLnVuci5lZHUvaWRwL3NoaWJib2xldGgiLCJpZHBfbmFtZSI6IlVuaXZlcnNpdHkgb2YgTmV2YWRhLCBSZW5vIiwiZXBwbiI6ImNtYXJ0aXJlc0B1bnIuZWR1IiwiZXB0aWQiOiJodHRwczovL2lkcDIudW5yLmVkdS9pZHAvc2hpYmJvbGV0aCFodHRwczovL2NpbG9nb24ub3JnL3NoaWJib2xldGghWmZaS1pVWFRhT2w2WmFmT3FXdmM0YWRVWnRnPSIsImFmZmlsaWF0aW9uIjoic3R1ZGVudEB1bnIuZWR1O21lbWJlckB1bnIuZWR1O2ZhY3VsdHlAdW5yLmVkdTtsaWJyYXJ5LXdhbGstaW5AdW5yLmVkdTtzdGFmZkB1bnIuZWR1O2VtcGxveWVlQHVuci5lZHUiLCJhY3IiOiJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZFByb3RlY3RlZFRyYW5zcG9ydCIsImlzcyI6Imh0dHBzOi8vY2lsb2dvbi5vcmciLCJzdWIiOiJodHRwOi8vY2lsb2dvbi5vcmcvc2VydmVyRS91c2Vycy8xNTI3NiIsImF1ZCI6ImNpbG9nb246L2NsaWVudF9pZC8xYTA1MTE0NWVjYjQzNzUwOGVkOGE4ODcxYmVkN2I3NyIsImp0aSI6Imh0dHBzOi8vY2lsb2dvbi5vcmcvb2F1dGgyL2lkVG9rZW4vMTFlNDk2MTc0YjY0NWRjYTk1MmEwYzk1NTk2OGI5ZGUvMTY4MTc5NDIyMzA2MSIsIm5vbmNlIjoiTEhGcG9qSW8zV0JkT2hkZSIsImF1dGhfdGltZSI6MTY4MTc5MzY4NSwiZXhwIjoxNjgxNzk1MTIzLCJpYXQiOjE2ODE3OTQyMjN9.cL1EBdX2SmbOmBnD4iFpAg1seafL6gkuCkG21EOnUYp_KF9VCHDpzr-rVdLVPBW_jESL3Grr877jKwkdmXVZsNrLmWP2Y1nbEF587dw5UEwP38pUnfHgU63w7FP7kA1LnnCBtLisvLB-6XG-R8ahYCrDeYWMbOWILPHuZt0_nIW9Dc1BzqfAqN8u6mP-H6JB4g0BNUihcH63DN3qdUN-2J5mSIJQ8vIr4B2WLhTuGjw4mR4vttm-3x8jaW0-mFmcqAtEbSytkZ24d9WuYqMy5-a0YLn3w3r6fJomdKkV8zTYrl6odXbii-C_jq05Dj54nLoxm9x2dnVZV_Q-F4xgOg"
+        site1_access_token: store.state.site_1.access_token,
+        site1_id_token_jwt: store.state.site_1.id_token_jwt
       }).then((res) => {
         console.log(res)
         if (!res.data.is_valid_ip) {
@@ -261,8 +269,8 @@ export default {
 
       axios.post("http://localhost:3000/site2_ip", {
         site2_IP: values.ip_address_s2,
-        site2_access_token: "NB2HI4DTHIXS6Y3JNRXWO33OFZXXEZZPN5QXK5DIGIXTEN3GGEYTOODEMQ2TMMDCG42DQNRRMMZGENRXHFRWKZDGGIYGENJ7OR4XAZJ5MFRWGZLTONKG623FNYTHI4Z5GE3DQMJXHE2DENJXHAZTIJTWMVZHG2LPNY6XMMROGATGY2LGMV2GS3LFHU4TAMBQGAYA",
-        site2_id_token_jwt: "eyJ0eXAiOiJKV1QiLCJraWQiOiIyNDRCMjM1RjZCMjhFMzQxMDhEMTAxRUFDNzM2MkM0RSIsImFsZyI6IlJTMjU2In0.eyJlbWFpbCI6ImNtYXJ0aXJlc0BuZXZhZGEudW5yLmVkdSIsImdpdmVuX25hbWUiOiJDb2xpbiIsImZhbWlseV9uYW1lIjoiTWFydGlyZXMiLCJuYW1lIjoiQ29saW4gTWFydGlyZXMiLCJjZXJ0X3N1YmplY3RfZG4iOiIvREM9b3JnL0RDPWNpbG9nb24vQz1VUy9PPUFDQ0VTUy9DTj1Db2xpbiBNYXJ0aXJlcyBFMzc5NzEiLCJpZHAiOiJodHRwczovL2FjY2Vzcy1jaS5vcmcvaWRwIiwiaWRwX25hbWUiOiJBQ0NFU1MiLCJlcHBuIjoiY21hcnRpcmVzQGFjY2Vzcy1jaS5vcmciLCJlcHRpZCI6Imh0dHBzOi8vYWNjZXNzLWNpLm9yZy9pZHAhaHR0cHM6Ly9jaWxvZ29uLm9yZy9zaGliYm9sZXRoITJYZUZpSzNpNGhiNWxMVVM2L3JWZlcxck9jMD0iLCJhY3IiOiJodHRwczovL3JlZmVkcy5vcmcvcHJvZmlsZS9tZmEiLCJpc3MiOiJodHRwczovL2NpbG9nb24ub3JnIiwic3ViIjoiaHR0cDovL2NpbG9nb24ub3JnL3NlcnZlckUvdXNlcnMvMzc5NzEiLCJhdWQiOiJjaWxvZ29uOi9jbGllbnRfaWQvMWEwNTExNDVlY2I0Mzc1MDhlZDhhODg3MWJlZDdiNzciLCJqdGkiOiJodHRwczovL2NpbG9nb24ub3JnL29hdXRoMi9pZFRva2VuLzQ2NTA1YTk4YjZhNTNiN2M3NmVmYTMwZWFjMmRmODA2LzE2ODE3OTQyNTcxOTIiLCJub25jZSI6ImxlS1NVQzN0VW5VTHZoNDEiLCJhdXRoX3RpbWUiOjE2ODE3OTQyNTYsImV4cCI6MTY4MTc5NTE1NywiaWF0IjoxNjgxNzk0MjU3fQ.cC1plED_3D-MNPUPnRVSMipdR6_RUnNOxOKGBPBmP2CKJeiuT4u8zltfcoWuP-qwuRmeHca3NbUro-w5-R8TlKICAuBxe_Fbyuj60NV_sZXgmys3dLjNUI2FugBX45JR-OnBNxmFifeDwjefY9vP10R7XYWA-QvBrAnWHxmNA5LFSHkHlX45HPoXR4xwx4jEcuoZzre_Vsw1f8_QCpSWS4trjE39l2MvJEGHKOW73MWxl39jFl2_XFXH7648mKDeGwIEOWGP04V1Kn1Lci2mCxnrLR5CiTZB_96_Zq9sXxfKk6i1s7lgMXPnniAx1JoOqCZllPATJ7SjO9VZpSvjcQ"
+        site2_access_token: store.state.site_2.access_token,
+        site2_id_token_jwt: store.state.site_2.id_token_jwt
       }).then((res) => {
         console.log(res)
         if (!res.data.is_valid_ip) {
@@ -335,14 +343,20 @@ export default {
         return;
       }
 
+
+      // TODO:
+      // only add online ips (currently, verified status has overwritten online status)
+
       // extract site 1 IP addresses
       const site1_ips = this.$store.state.site_1.ips.map(function (ip) {
+        console.log(ip)
         return ip.ip;
       });
       this.site1_ips = site1_ips
 
       // extract site 2 IP addresses
       const site2_ips = this.$store.state.site_2.ips.map(function (ip) {
+        console.log(ip)
         return ip.ip;
       });
       this.site2_ips = site2_ips
@@ -375,16 +389,19 @@ export default {
 
       let new_path = ""
       if (isBack) {
-        const endPathStartIndex = this.file_path_s1.value.value.lastIndexOf("\\")
+        const endPathStartIndex = this.file_path_s1.value.value.lastIndexOf("/")
         new_path = this.file_path_s1.value.value.substring(0, endPathStartIndex)
       } else {
-        new_path = this.file_path_s1.value.value.concat("\\", new_folder)
+        new_path = this.file_path_s1.value.value.concat("/", new_folder)
       }
+
+      console.log(this.$store.state.site_1.access_token)
+      console.log(this.$store.state.site_1.id_token_jwt)
 
       axios.post("http://localhost:3000/site1_ip", {
         site1_IP: this.ip_address_s1.value.value,
-        site1_access_token: "NB2HI4DTHIXS6Y3JNRXWO33OFZXXEZZPN5QXK5DIGIXTOZBTG43DCZTDMFRGENBQGEZGGOJUG5QTGMTFGQZDMMBUGVQTMNR7OR4XAZJ5MFRWGZLTONKG623FNYTHI4Z5GE3DQMJXHE2DEMRTGIYDIJTWMVZHG2LPNY6XMMROGATGY2LGMV2GS3LFHU4TAMBQGAYA",
-        site1_id_token_jwt: "eyJ0eXAiOiJKV1QiLCJraWQiOiIyNDRCMjM1RjZCMjhFMzQxMDhEMTAxRUFDNzM2MkM0RSIsImFsZyI6IlJTMjU2In0.eyJlbWFpbCI6ImNtYXJ0aXJlc0BuZXZhZGEudW5yLmVkdSIsImdpdmVuX25hbWUiOiJDb2xpbiIsImZhbWlseV9uYW1lIjoiTWFydGlyZXMiLCJuYW1lIjoiQ29saW4gTCBNYXJ0aXJlcyIsImNlcnRfc3ViamVjdF9kbiI6Ii9EQz1vcmcvREM9Y2lsb2dvbi9DPVVTL089VW5pdmVyc2l0eSBvZiBOZXZhZGEsIFJlbm8vQ049Q29saW4gTWFydGlyZXMgRTE1Mjc2IiwiaWRwIjoiaHR0cHM6Ly9pZHAyLnVuci5lZHUvaWRwL3NoaWJib2xldGgiLCJpZHBfbmFtZSI6IlVuaXZlcnNpdHkgb2YgTmV2YWRhLCBSZW5vIiwiZXBwbiI6ImNtYXJ0aXJlc0B1bnIuZWR1IiwiZXB0aWQiOiJodHRwczovL2lkcDIudW5yLmVkdS9pZHAvc2hpYmJvbGV0aCFodHRwczovL2NpbG9nb24ub3JnL3NoaWJib2xldGghWmZaS1pVWFRhT2w2WmFmT3FXdmM0YWRVWnRnPSIsImFmZmlsaWF0aW9uIjoic3R1ZGVudEB1bnIuZWR1O21lbWJlckB1bnIuZWR1O2ZhY3VsdHlAdW5yLmVkdTtsaWJyYXJ5LXdhbGstaW5AdW5yLmVkdTtzdGFmZkB1bnIuZWR1O2VtcGxveWVlQHVuci5lZHUiLCJhY3IiOiJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZFByb3RlY3RlZFRyYW5zcG9ydCIsImlzcyI6Imh0dHBzOi8vY2lsb2dvbi5vcmciLCJzdWIiOiJodHRwOi8vY2lsb2dvbi5vcmcvc2VydmVyRS91c2Vycy8xNTI3NiIsImF1ZCI6ImNpbG9nb246L2NsaWVudF9pZC8xYTA1MTE0NWVjYjQzNzUwOGVkOGE4ODcxYmVkN2I3NyIsImp0aSI6Imh0dHBzOi8vY2lsb2dvbi5vcmcvb2F1dGgyL2lkVG9rZW4vMTFlNDk2MTc0YjY0NWRjYTk1MmEwYzk1NTk2OGI5ZGUvMTY4MTc5NDIyMzA2MSIsIm5vbmNlIjoiTEhGcG9qSW8zV0JkT2hkZSIsImF1dGhfdGltZSI6MTY4MTc5MzY4NSwiZXhwIjoxNjgxNzk1MTIzLCJpYXQiOjE2ODE3OTQyMjN9.cL1EBdX2SmbOmBnD4iFpAg1seafL6gkuCkG21EOnUYp_KF9VCHDpzr-rVdLVPBW_jESL3Grr877jKwkdmXVZsNrLmWP2Y1nbEF587dw5UEwP38pUnfHgU63w7FP7kA1LnnCBtLisvLB-6XG-R8ahYCrDeYWMbOWILPHuZt0_nIW9Dc1BzqfAqN8u6mP-H6JB4g0BNUihcH63DN3qdUN-2J5mSIJQ8vIr4B2WLhTuGjw4mR4vttm-3x8jaW0-mFmcqAtEbSytkZ24d9WuYqMy5-a0YLn3w3r6fJomdKkV8zTYrl6odXbii-C_jq05Dj54nLoxm9x2dnVZV_Q-F4xgOg"
+        site1_access_token: this.$store.state.site_1.access_token,
+        site1_id_token_jwt: this.$store.state.site_1.id_token_jwt
       }).then((res) => {
         console.log(res)
         if (!res.data.is_valid_ip) {
@@ -412,16 +429,16 @@ export default {
 
       let new_path = ""
       if (isBack) {
-        const endPathStartIndex = this.file_path_s2.value.value.lastIndexOf("\\")
+        const endPathStartIndex = this.file_path_s2.value.value.lastIndexOf("/")
         new_path = this.file_path_s2.value.value.substring(0, endPathStartIndex)
       } else {
-        new_path = this.file_path_s2.value.value.concat("\\", new_folder)
+        new_path = this.file_path_s2.value.value.concat("/", new_folder)
       }
 
       axios.post("http://localhost:3000/site2_ip", {
         site2_IP: this.ip_address_s2.value.value,
-        site2_access_token: "NB2HI4DTHIXS6Y3JNRXWO33OFZXXEZZPN5QXK5DIGIXTOZBTG43DCZTDMFRGENBQGEZGGOJUG5QTGMTFGQZDMMBUGVQTMNR7OR4XAZJ5MFRWGZLTONKG623FNYTHI4Z5GE3DQMJXHE2DEMRTGIYDIJTWMVZHG2LPNY6XMMROGATGY2LGMV2GS3LFHU4TAMBQGAYA",
-        site2_id_token_jwt: "eyJ0eXAiOiJKV1QiLCJraWQiOiIyNDRCMjM1RjZCMjhFMzQxMDhEMTAxRUFDNzM2MkM0RSIsImFsZyI6IlJTMjU2In0.eyJlbWFpbCI6ImNtYXJ0aXJlc0BuZXZhZGEudW5yLmVkdSIsImdpdmVuX25hbWUiOiJDb2xpbiIsImZhbWlseV9uYW1lIjoiTWFydGlyZXMiLCJuYW1lIjoiQ29saW4gTCBNYXJ0aXJlcyIsImNlcnRfc3ViamVjdF9kbiI6Ii9EQz1vcmcvREM9Y2lsb2dvbi9DPVVTL089VW5pdmVyc2l0eSBvZiBOZXZhZGEsIFJlbm8vQ049Q29saW4gTWFydGlyZXMgRTE1Mjc2IiwiaWRwIjoiaHR0cHM6Ly9pZHAyLnVuci5lZHUvaWRwL3NoaWJib2xldGgiLCJpZHBfbmFtZSI6IlVuaXZlcnNpdHkgb2YgTmV2YWRhLCBSZW5vIiwiZXBwbiI6ImNtYXJ0aXJlc0B1bnIuZWR1IiwiZXB0aWQiOiJodHRwczovL2lkcDIudW5yLmVkdS9pZHAvc2hpYmJvbGV0aCFodHRwczovL2NpbG9nb24ub3JnL3NoaWJib2xldGghWmZaS1pVWFRhT2w2WmFmT3FXdmM0YWRVWnRnPSIsImFmZmlsaWF0aW9uIjoic3R1ZGVudEB1bnIuZWR1O21lbWJlckB1bnIuZWR1O2ZhY3VsdHlAdW5yLmVkdTtsaWJyYXJ5LXdhbGstaW5AdW5yLmVkdTtzdGFmZkB1bnIuZWR1O2VtcGxveWVlQHVuci5lZHUiLCJhY3IiOiJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YWM6Y2xhc3NlczpQYXNzd29yZFByb3RlY3RlZFRyYW5zcG9ydCIsImlzcyI6Imh0dHBzOi8vY2lsb2dvbi5vcmciLCJzdWIiOiJodHRwOi8vY2lsb2dvbi5vcmcvc2VydmVyRS91c2Vycy8xNTI3NiIsImF1ZCI6ImNpbG9nb246L2NsaWVudF9pZC8xYTA1MTE0NWVjYjQzNzUwOGVkOGE4ODcxYmVkN2I3NyIsImp0aSI6Imh0dHBzOi8vY2lsb2dvbi5vcmcvb2F1dGgyL2lkVG9rZW4vMTFlNDk2MTc0YjY0NWRjYTk1MmEwYzk1NTk2OGI5ZGUvMTY4MTc5NDIyMzA2MSIsIm5vbmNlIjoiTEhGcG9qSW8zV0JkT2hkZSIsImF1dGhfdGltZSI6MTY4MTc5MzY4NSwiZXhwIjoxNjgxNzk1MTIzLCJpYXQiOjE2ODE3OTQyMjN9.cL1EBdX2SmbOmBnD4iFpAg1seafL6gkuCkG21EOnUYp_KF9VCHDpzr-rVdLVPBW_jESL3Grr877jKwkdmXVZsNrLmWP2Y1nbEF587dw5UEwP38pUnfHgU63w7FP7kA1LnnCBtLisvLB-6XG-R8ahYCrDeYWMbOWILPHuZt0_nIW9Dc1BzqfAqN8u6mP-H6JB4g0BNUihcH63DN3qdUN-2J5mSIJQ8vIr4B2WLhTuGjw4mR4vttm-3x8jaW0-mFmcqAtEbSytkZ24d9WuYqMy5-a0YLn3w3r6fJomdKkV8zTYrl6odXbii-C_jq05Dj54nLoxm9x2dnVZV_Q-F4xgOg"
+        site2_access_token: this.$store.state.site_2.access_token,
+        site2_id_token_jwt: this.$store.state.site_2.id_token_jwt
       }).then((res) => {
         console.log(res)
         if (!res.data.is_valid_ip) {
