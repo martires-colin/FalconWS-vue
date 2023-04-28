@@ -343,43 +343,64 @@ export default {
         return;
       }
 
-
-      // TODO:
-      // only add online ips (currently, verified status has overwritten online status)
-
       // extract site 1 IP addresses
       const site1_ips = this.$store.state.site_1.ips.map(function (ip) {
-        console.log(ip)
-        return ip.ip;
+        if (ip.status == "online" || ip.status == "verified") {
+          return ip.ip;
+        }
       });
-      this.site1_ips = site1_ips
+
+      const filtered_site1_ips = site1_ips.filter(function(x) {
+          return x !== undefined;
+      });
+      this.site1_ips = filtered_site1_ips
 
       // extract site 2 IP addresses
       const site2_ips = this.$store.state.site_2.ips.map(function (ip) {
-        console.log(ip)
-        return ip.ip;
+        if (ip.status == "online" || ip.status == "verified") {
+          return ip.ip;
+        }
       });
-      this.site2_ips = site2_ips
+
+      const filtered_site2_ips = site2_ips.filter(function(x) {
+          return x !== undefined;
+      });
+      this.site2_ips = filtered_site2_ips
 
     },
     async transfer() {
       const payload = {
         file_list: this.selected,
         srcIP: this.ip_address_s1.value.value,
-        srcPath: this.file_path_s1.value.value,
+        srcPath: this.file_path_s1.value.value + "/",
         destIP: this.ip_address_s2.value.value,
-        destPath: this.file_path_s2.value.value,
+        destPath: this.file_path_s2.value.value + "/",
+        user_name: this.$store.state.user.full_name,
+        user_email: this.$store.state.user.email,
+        user_affiliation: this.$store.state.user.idp_name
       }
       console.log(payload)
 
       axios.post("http://localhost:3000/transferFiles", {
         srcIP: this.ip_address_s1.value.value,
         destIP: this.ip_address_s2.value.value,
-        sender_dir: this.file_path_s1.value.value,
-        dest_dir: this.file_path_s2.value.value,
-        selected_files: this.selected
+        sender_dir: this.file_path_s1.value.value + "/",
+        dest_dir: this.file_path_s2.value.value + "/",
+        selected_files: this.selected,
+        user_name: this.$store.state.user.full_name,
+        user_email: this.$store.state.user.email,
+        user_affiliation: this.$store.state.user.idp_name
       }).then((res) => {
-        console.log(res)
+        if (res.data.transfer_status == "success") {
+          alert("Transfer Successful")
+          console.log(res)
+        } else {
+          alert("Something went wrong")
+          console.log(res)
+        }
+
+        this.$router.push("/history")
+
       }).catch((err) => {
         console.log(err)
       })

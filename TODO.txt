@@ -20,6 +20,7 @@ add check to make sure both site1 and site2 have values
 - add visual indicators of loading requests (list files and transfer)
 
 - set home dir as default dir
+    - can't navigate to the home directory becuase of permissions
 
 - transfer should be able to be performed both ways
 
@@ -27,3 +28,5 @@ add check to make sure both site1 and site2 have values
     - should folder size be 4096 B or sum of contents?
 
 - add error handling
+
+- fix updating node statuses

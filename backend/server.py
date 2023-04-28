@@ -1,6 +1,7 @@
 import json
 import pika
 import datetime
+from bson.json_util import dumps, loads
 
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
@@ -305,6 +306,9 @@ def transferFiles():
     destIP = post_data['destIP']
     sender_dir = post_data['sender_dir']
     dest_dir = post_data['dest_dir']
+    user_name = post_data['user_name']
+    user_email = post_data['user_email']
+    user_affiliation = post_data['user_affiliation']
 
     sender_dir_list = []
     sender_dir_list.append(sender_dir)
@@ -325,9 +329,48 @@ def transferFiles():
     # rmq.transfer(payload["sender_ip"], payload["receiver_ip"], payload["file_list"])
     rmq.transfer(payload["receiver_ip"], payload["dest_dir"], payload["sender_ip"], payload["file_list"])
 
+    # transfer should return status code
+    status = "success"
 
-    return jsonify({'data': payload})
+    # add transfer job to MongoDB
+    epochTime = datetime.datetime.now().timestamp()
+    requestTime = datetime.datetime.now().strftime("%m/%d/%Y, %I:%M %p")
 
+    post = {
+        "full_name": user_name,
+        "email": user_email,
+        "idp_name": user_affiliation,
+        "srcIP": srcIP,
+        "srcDir": sender_dir,
+        "destIP": destIP,
+        "destDir": dest_dir,
+        "selectedFiles": selectedFiles,
+        "epochTime":  epochTime,
+        "requestTime": requestTime,
+        "completionTime": "12345 [temp val]",
+        "transferDuration": "12345 [temp val]",
+        "transferStatus": status
+    }
+    print(post)
+    l_transfer_data.insert_one(post)
+
+    return jsonify({
+        'transfer_status': status,
+        "transfer_details": payload
+    })
+
+@app.route('/getHistory', methods=['POST', 'GET'])
+def getHistory():
+
+    # temp var
+    user_email = "cmartires@nevada.unr.edu"
+
+    cursor = l_transfer_data.find({"email": user_email}).sort("epochTime", -1)
+    list_cur = list(cursor)
+    json_data = dumps(list_cur)
+    return jsonify({
+        "transferData": json_data
+    })
     
 
 if __name__ == "__main__":
