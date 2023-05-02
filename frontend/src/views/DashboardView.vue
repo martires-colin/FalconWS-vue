@@ -12,7 +12,7 @@
     </div> -->
 
       <!-- Page Header -->
-      <v-row>
+      <v-row class="my-4">
         <div class="text-h4 text-center w-100">File Transfer Portal</div>
       </v-row>
 
@@ -317,7 +317,7 @@ export default {
       console.log("logging in to Site2!")
       window.location.href = "http://localhost:3000/loginSite2";
     },
-    async getUser() {
+    async getUserIPs() {
       console.log("Getting User")
       const path = 'http://localhost:3000/get_user';
       const response = await fetch(path, {
@@ -485,7 +485,7 @@ export default {
     }
   },
   created() {
-    this.getUser();
+    this.getUserIPs();
   },
 }
 </script>

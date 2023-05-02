@@ -14,19 +14,24 @@ fix form validation bug
 
 add check to make sure both site1 and site2 have values
 
-- redirect users to “transfer status/history page” after initiating transfer to prevent spam requests
-    - disable buttons while transfer is running
-
 - add visual indicators of loading requests (list files and transfer)
 
 - set home dir as default dir
-    - can't navigate to the home directory becuase of permissions
+    - extract username from email for access /home/<username> by default
 
 - transfer should be able to be performed both ways
 
 - display file size
     - should folder size be 4096 B or sum of contents?
+    - Parker will change list command to not be recursive
+    - folders should be 4096
+    - don't recursively sum up content, just display individual file size
 
 - add error handling
 
 - fix updating node statuses
+
+BY NEXT WEEK
+
+- redirect users to “transfer status/history page” after initiating transfer to prevent spam requests
+    - disable buttons while transfer is running

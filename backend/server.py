@@ -334,7 +334,7 @@ def transferFiles():
 
     # add transfer job to MongoDB
     epochTime = datetime.datetime.now().timestamp()
-    requestTime = datetime.datetime.now().strftime("%m/%d/%Y, %I:%M %p")
+    requestTime = datetime.datetime.now().strftime("%m/%d/%Y %I:%M %p")
 
     post = {
         "full_name": user_name,

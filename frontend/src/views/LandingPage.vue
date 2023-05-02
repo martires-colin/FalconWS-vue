@@ -15,7 +15,7 @@
             <div class="text-center text-subtitle-1 mb-4">
               Falcon combines a game theory-inspired utility function with state-of-the-art online search algorithms to swiftly discover "just-enough" transfer settings to obtain near-optimal transfer throughput while lowering system overhead and improving fairness.
             </div>
-            <div class="text-center">
+            <div v-if="!this.$store.state.user.email" class="text-center">
               <v-btn v-if="this.$store.state.user.email" @click="logout" color="white">Logout</v-btn>
               <v-btn v-else @click="login" color="white">Login</v-btn>
             </div>
