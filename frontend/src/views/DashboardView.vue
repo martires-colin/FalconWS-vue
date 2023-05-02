@@ -81,7 +81,8 @@
                       <p v-else>{{ file.name }}</p>
                     </td>
                     <td class="text-left">{{ file.last_modified }}</td>
-                    <td class="text-left">{{ file.size }} B</td>
+                    <td v-if="file.type == 'dir'" class="text-left">4096 B</td>
+                    <td v-else class="text-left">{{ file.size }} B</td>
                     <td class="text-center">
                       <v-icon v-if="file.type == 'dir'" icon="mdi-folder-outline"></v-icon>
                       <v-icon v-else icon="mdi-file-outline"></v-icon>

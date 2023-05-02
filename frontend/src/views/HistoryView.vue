@@ -137,27 +137,8 @@
             </v-list-item>
 
             <v-divider inset></v-divider>
-<!-- 
-            <v-list-item
-              append-icon="mdi-message-text"
-              prepend-icon="mdi-phone"
-            >
-            Destination Info: {{ t.destIP }}
-            </v-list-item>
-
-            <v-divider inset></v-divider>
-
-            <v-list-item
-              append-icon="mdi-message-text"
-              prepend-icon="mdi-phone"
-            >
-            Destination IP: {{ t.destIP }}
-            </v-list-item>
-
-            <v-divider inset></v-divider> -->
 
           </v-list>
-
 
         </v-expansion-panel-text>
       </v-expansion-panel>
