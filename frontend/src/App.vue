@@ -2,14 +2,17 @@
   <v-app>
 
     <!-- Navigation Bar -->
-    <v-app-bar :elevation="1" class="px-6">
+    <v-app-bar :elevation="1" class="px-12">
       <v-avatar :tile="true">
         <img :src="require('@/assets/falcon-icon.png')" alt="logo">
       </v-avatar>
 
-      <v-app-bar-title @click="$router.push('/')">Falcon</v-app-bar-title>
+      <v-app-bar-title >
+        Falcon
+      </v-app-bar-title>
 
       <template v-slot:append>
+        <v-btn v-if="this.$store.state.user.email" @click="$router.push('/')">Home</v-btn>
         <v-btn v-if="this.$store.state.user.email" @click="$router.push('/dashboard')">Dashboard</v-btn>
         <v-btn v-if="this.$store.state.user.email" @click="$router.push('/history')">History</v-btn>
         <v-btn v-if="this.$store.state.user.email" @click="logout" variant="outlined">Logout</v-btn>
@@ -74,9 +77,5 @@ export default {
 </script>
 
 <style>
-
-.v-app-bar-title {
-  cursor: pointer;
-}
 
 </style>

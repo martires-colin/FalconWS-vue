@@ -46,7 +46,7 @@
 
           <!-- {{ this.site1_files }} -->
           <v-row>
-            <v-table v-if="this.site1_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
+            <v-table v-if="this.site1_files.length >= 0 && this.$store.state.site_1" class="w-100 my-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
                   <th class="text-center">
@@ -133,7 +133,7 @@
 
           <!-- {{ this.site2_files }} -->
           <v-row>
-            <v-table v-if="this.site2_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
+            <v-table v-if="this.site2_files.length >= 0 && this.$store.state.site_2" class="w-100 my-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
                   <th class="text-center">

@@ -6,17 +6,10 @@ find a good place to send verify request
 
 - transfer should be able to be performed both ways
 
-- display file size
-    - should folder size be 4096 B or sum of contents?
-    - Parker will change list command to not be recursive
-    - folders should be 4096
-    - don't recursively sum up content, just display individual file size
-
 - add error handling
 
 - fix updating node statuses
 
-BY NEXT WEEK
+- add loading visuals
 
-- redirect users to “transfer status/history page” after initiating transfer to prevent spam requests
-    - disable buttons while transfer is running
+BY NEXT WEEK
