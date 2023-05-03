@@ -1,15 +1,6 @@
 <template>
   <div>
     <v-container fluid>
-    <!-- <div class="">
-      {{ this.$store.state.user.full_name }}
-      {{ this.$store.state.user.email }}
-      {{ this.$store.state.user.idp_name }}
-      {{ this.$store.state.user.access_token }}
-      {{ this.$store.state.user.id_token_jwt }}
-      {{ this.$store.state.site_1 }}
-      {{ this.$store.state.site_2 }}
-    </div> -->
 
       <!-- Page Header -->
       <v-row class="my-4">
@@ -18,13 +9,14 @@
 
       <!-- File Browser Section -->
       <v-row>
+
         <!-- Site 1 -->
         <v-col class="ma-1">
+
+          <!-- If user not logged into site, display button, else display form -->
           <v-row>
-            <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_1" class="text-center w-100">
-              <div class="text-h5 ma-2">{{ this.$store.state.site_1.idp_name }}</div>
-              
+              <div class="text-h5 ma-2">{{ this.$store.state.site_1.idp_name }}</div>    
               <form @submit.prevent="submit_s1">
                 <v-select
                   v-model="ip_address_s1.value.value"
@@ -34,26 +26,27 @@
                   :item-disabled="checkIsItemDisabled"
                   :error-messages="ip_address_s1.errorMessage.value"
                   label="IP Address"
+                  :append-icon="ip_address_s1.value.value ? 'mdi-magnify' : ''"
+                  @click:append="submit_s1"
                 ></v-select>
                 <v-text-field
+                  v-if="this.site1_files.length >= 0"
                   v-model="file_path_s1.value.value"
                   :error-messages="file_path_s1.errorMessage.value"
                   label="File Path"
+                  readonly
                 ></v-text-field>
-                <v-btn class="me-4" type="submit">
-                  submit
-                </v-btn>
               </form>
-
             </div>
             <div v-else class="text-center w-100">
               <div class="text-h5">Site 1</div>
               <v-btn @click="loginSite1" color="blue-lighten-1">Site 1 Login</v-btn>
             </div>
           </v-row>
+
+          <!-- {{ this.site1_files }} -->
           <v-row>
-            <!-- {{ this.site1_files }} -->
-            <v-table v-if="this.site2_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
+            <v-table v-if="this.site1_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
                   <th class="text-center">
@@ -93,8 +86,9 @@
           </v-row>
         </v-col>
 
+        
+        <!-- Initiate Transfer Button -->
         <v-col cols="1" class="d-flex justify-center align-center" style="height: 80vh">
-            <!-- Initiate Transfer Button -->
           <!-- <v-row v-if="this.site1_files.length > 0 && this.site2_files.length > 0"> -->
           <v-row>
             <div class="text-center w-100">
@@ -110,7 +104,6 @@
             <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_2" class="text-center w-100">
               <div class="text-h5 ma-2">{{ this.$store.state.site_2.idp_name }}</div>
-              
               <form @submit.prevent="submit_s2">
                 <v-select
                   v-model="ip_address_s2.value.value"
@@ -120,25 +113,26 @@
                   :item-disabled="checkIsItemDisabled"
                   :error-messages="ip_address_s2.errorMessage.value"
                   label="IP Address"
+                  :append-icon="ip_address_s2.value.value ? 'mdi-magnify' : ''"
+                  @click:append="submit_s2"
                 ></v-select>
                 <v-text-field
+                  v-if="this.site2_files.length >= 0"
                   v-model="file_path_s2.value.value"
                   :error-messages="file_path_s2.errorMessage.value"
                   label="File Path"
+                  readonly
                 ></v-text-field>
-                <v-btn class="me-4" type="submit">
-                  submit
-                </v-btn>
               </form>
-
             </div>
             <div v-else class="text-center w-100">
               <div class="text-h5">Site 2</div>
               <v-btn @click="loginSite2" color="blue-lighten-1">Site 2 Login</v-btn>
             </div>
           </v-row>
+
+          <!-- {{ this.site2_files }} -->
           <v-row>
-            <!-- {{ this.site2_files }} -->
             <v-table v-if="this.site2_files.length >= 0" class="w-100 my-4" style="max-height:50vh; overflow:auto">
                 <thead>
                 <tr>
@@ -200,28 +194,9 @@ export default {
   setup () {
     const store = useStore();
 
-    const { handleSubmit, handleReset } = useForm({
-      // validationSchema: {
-      //   file_path_s1 (value) {
-      //     if (value) return true
-      //     return 'Must be a valid file path.'
-      //   },
-      //   ip_address_s1 (value) {
-      //     if (value) return true
-      //     return 'Select an IP address.'
-      //   },
-      //   file_path_s2 (value) {
-      //     if (value) return true
-      //     return 'Must be a valid file path.'
-      //   },
-      //   ip_address_s2 (value) {
-      //     if (value) return true
-      //     return 'Select an IP address.'
-      //   }
-      // },
-    })
+    const { handleSubmit, handleReset } = useForm()
 
-    const file_path_s1 = useField('file_path_s1')
+    let file_path_s1 = useField('file_path_s1')
     const ip_address_s1 = useField('ip_address_s1')
     const site1_ips = ref([])
     const site1_files = ref([])
@@ -230,6 +205,9 @@ export default {
       console.log("SITE 1")
       console.log(values.file_path_s1)
       console.log(values.ip_address_s1)
+
+      const username = store.state.site_1.email.substring(0, store.state.site_1.email.indexOf("@"))
+      file_path_s1.value.value = "/home/" + username
 
       axios.post("http://localhost:3000/site1_ip", {
         site1_IP: values.ip_address_s1,
@@ -258,7 +236,7 @@ export default {
       })
     })
 
-    const file_path_s2 = useField('file_path_s2')
+    let file_path_s2 = useField('file_path_s2')
     const ip_address_s2 = useField('ip_address_s2')
     const site2_ips = ref([])
     const site2_files = ref([])
@@ -267,6 +245,9 @@ export default {
       console.log("SITE 2")
       console.log(values.file_path_s2)
       console.log(values.ip_address_s2)
+
+      const username = store.state.site_2.email.substring(0, store.state.site_2.email.indexOf("@"))
+      file_path_s2.value.value = "/home/" + username
 
       axios.post("http://localhost:3000/site2_ip", {
         site2_IP: values.ip_address_s2,

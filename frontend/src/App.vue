@@ -2,7 +2,7 @@
   <v-app>
 
     <!-- Navigation Bar -->
-    <v-app-bar :elevation="1" class="px-2">
+    <v-app-bar :elevation="1" class="px-6">
       <v-avatar :tile="true">
         <img :src="require('@/assets/falcon-icon.png')" alt="logo">
       </v-avatar>

@@ -1,23 +1,8 @@
-disable offline ips
-- send valid ips to frontend
-- maybe just use original method, not v-select
-- maybe only add online nodes to ip list
-    - verified status has overwritten online status
-
 find a good place to send verify request
 - can we have verification built into the list_files command?
     - the server or falcon node will verify the connection first before sending files
 
-format filebrowser
-
-fix form validation bug
-
-add check to make sure both site1 and site2 have values
-
 - add visual indicators of loading requests (list files and transfer)
-
-- set home dir as default dir
-    - extract username from email for access /home/<username> by default
 
 - transfer should be able to be performed both ways
 
