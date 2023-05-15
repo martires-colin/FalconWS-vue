@@ -10,6 +10,8 @@ find a good place to send verify request
 
 - fix updating node statuses
 
-- add loading visuals
+- automatically open most recent transfer
 
 BY NEXT WEEK
+- integrate new falcon node
+- move config_rabbitmq.py credentials to .env
