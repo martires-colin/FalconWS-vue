@@ -11,7 +11,7 @@
       <v-row>
 
         <!-- Site 1 -->
-        <v-col class="ma-1">
+        <v-col class="ma-3">
 
           <!-- If user not logged into site, display button, else display form -->
           <v-row>
@@ -41,6 +41,12 @@
             <div v-else class="text-center w-100">
               <div class="text-h5">Site 1</div>
               <v-btn @click="loginSite1" color="blue-lighten-1">Site 1 Login</v-btn>
+            </div>
+          </v-row>
+
+          <v-row>
+            <div class="text-center w-100">
+              <v-btn @click="transferLR()" color="blue-lighten-1" icon="mdi-transfer-right"></v-btn>
             </div>
           </v-row>
 
@@ -86,20 +92,8 @@
           </v-row>
         </v-col>
 
-        
-        <!-- Initiate Transfer Button -->
-        <v-col cols="1" class="d-flex justify-center align-center" style="height: 80vh">
-          <!-- <v-row v-if="this.site1_files.length > 0 && this.site2_files.length > 0"> -->
-          <v-row>
-            <div class="text-center w-100">
-              <!-- {{ selected }} -->
-              <v-btn @click="transfer()" color="blue-lighten-1">Transfer</v-btn>
-            </div>
-          </v-row>
-        </v-col>
-
         <!-- Site 2 -->
-        <v-col class="ma-1">
+        <v-col class="ma-3">
           <v-row>
             <!-- If user not logged into site, display button, else display form -->
             <div v-if="this.$store.state.site_2" class="text-center w-100">
@@ -128,6 +122,12 @@
             <div v-else class="text-center w-100">
               <div class="text-h5">Site 2</div>
               <v-btn @click="loginSite2" color="blue-lighten-1">Site 2 Login</v-btn>
+            </div>
+          </v-row>
+
+          <v-row>
+            <div class="text-center w-100">
+              <v-btn @click="transferRL()" color="blue-lighten-1" icon="mdi-transfer-left"></v-btn>
             </div>
           </v-row>
 
@@ -350,7 +350,7 @@ export default {
       this.site2_ips = filtered_site2_ips
 
     },
-    async transfer() {
+    async transferLR() {
       const payload = {
         file_list: this.selected,
         srcIP: this.ip_address_s1.value.value,
@@ -368,6 +368,44 @@ export default {
         destIP: this.ip_address_s2.value.value,
         sender_dir: this.file_path_s1.value.value + "/",
         dest_dir: this.file_path_s2.value.value + "/",
+        selected_files: this.selected,
+        user_name: this.$store.state.user.full_name,
+        user_email: this.$store.state.user.email,
+        user_affiliation: this.$store.state.user.idp_name
+      }).then((res) => {
+        if (res.data.transfer_status == "success") {
+          alert("Transfer Successful")
+          console.log(res)
+        } else {
+          alert("Something went wrong")
+          console.log(res)
+        }
+
+        this.$router.push("/history")
+
+      }).catch((err) => {
+        console.log(err)
+      })
+
+    },
+    async transferRL() {
+      const payload = {
+        file_list: this.selected,
+        srcIP: this.ip_address_s2.value.value,
+        srcPath: this.file_path_s2.value.value + "/",
+        destIP: this.ip_address_s1.value.value,
+        destPath: this.file_path_s1.value.value + "/",
+        user_name: this.$store.state.user.full_name,
+        user_email: this.$store.state.user.email,
+        user_affiliation: this.$store.state.user.idp_name
+      }
+      console.log(payload)
+
+      axios.post("http://localhost:3000/transferFiles", {
+        srcIP: this.ip_address_s2.value.value,
+        destIP: this.ip_address_s1.value.value,
+        sender_dir: this.file_path_s2.value.value + "/",
+        dest_dir: this.file_path_s1.value.value + "/",
         selected_files: this.selected,
         user_name: this.$store.state.user.full_name,
         user_email: this.$store.state.user.email,

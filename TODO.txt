@@ -4,14 +4,13 @@ find a good place to send verify request
 
 - add visual indicators of loading requests (list files and transfer)
 
-- transfer should be able to be performed both ways
-
 - add error handling
 
 - fix updating node statuses
 
 - automatically open most recent transfer
 
+- save state of dashboard
+
 BY NEXT WEEK
 - integrate new falcon Node
-- testing multiple push
