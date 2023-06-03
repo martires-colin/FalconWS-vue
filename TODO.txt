@@ -12,5 +12,11 @@ find a good place to send verify request
 
 - save state of dashboard
 
+- fix button render states
+
 BY NEXT WEEK
 - integrate new falcon Node
+
+For database
+- add user_count
+- add user_list
